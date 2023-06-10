@@ -1,81 +1,47 @@
-let music = false;
-class npcScreen extends Phaser.Scene {
+let musicOnStart = false;
+
+class npcScreen extends Cinematics {
     constructor() {
-        super('npcScreen')
+        super('npcScreen', 'npcScreen')
     }
-    create() {
-        NPCmessage++;
-        if(NPCmessage == 1){
-            this.message1 = this.add.text(900, 780, "Did you know, traveler? The housing crisis that began in Santa Cruz, it became contagious, spreading far and wide. The world was unprepared... it was the first domino to fall in our collapse.", { 
-                fontFamily: "pmd", 
-                fill: "#ffffff", 
-                align: "center",
-                wordWrap: { width: 600 } // wrap words that exceed this width
-            }).setOrigin(0.5).setAlpha(1).setFontSize(42); // set origin to center
-
-            this.time.delayedCall(5000, () => {
-                this.message1.destroy();
-                //fade
-                this.cameras.main.fadeOut(3000);
-                this.cameras.main.once('camerafadeoutcomplete', function (camera) {
-                    this.scene.start('MiniGame1');
-                }, this);
-            }, [], this);
+    onEnter() {
+        this.s = this.game.config.width * 0.01;
+        this.gww = this.game.config.width;
+        this.gwh = this.game.config.height;
+        if(musicOnStart == false && musicMute == false){ //this is for starting on each scene... do not change this
+            musicOnStart = true; //now music is playing on a loop, we need this so it doesnt start everytime we re-enter the scene
+            this.backMusic.play();
         }
-        //second game
-        if(NPCmessage == 2){
-            let storymessage2 = "Then came the ghost slugs, appearing from nowhere, taking over everything. We needed exterminators, but there were too few, too late. It was a strange, slimy apocalypse.";
-            this.message2 = this.add.text(900, 780, storymessage2, { 
-                font: "42px pixelfont", 
-                fill: "#ffffff", 
-                align: "center",
-                wordWrap: { width: 600 } // wrap words that exceed this width
-            }).setOrigin(0.5).setAlpha(1); // set origin to center
+        //rectangle behind background
+        let rect = new Phaser.Geom.Rectangle(1800, 0 , 120, 150);
 
-            this.time.delayedCall(5000, () => {
-                this.message2.destroy();
-                this.cameras.main.fadeOut(3000);
-                this.cameras.main.once('camerafadeoutcomplete', function (camera) {
-                    this.scene.start('MiniGame2');
-                }, this);
-            }, [], this);
-        }
-        //third game
-        if(NPCmessage == 3){
-            let storymessage3 = "Our once thriving land began to suffocate under toxic waste, the environment decayed, and we scrambled to save what was left. The animals, the fish, their survival hung by a thread. It was a desperate race against the clock."
-            this.message3 = this.add.text(900, 780, storymessage3, { 
-                font: "42px pixelfont", 
-                fill: "#ffffff", 
-                align: "center",
-                wordWrap: { width: 600 } // wrap words that exceed this width
-            }).setOrigin(0.5).setAlpha(1); // set origin to center
-            this.time.delayedCall(5000, () => {
-                this.message3.destroy();
-                this.cameras.main.fadeOut(3000);
-                this.cameras.main.once('camerafadeoutcomplete', function (camera) {
-                    this.scene.start('MiniGame3');
-                }, this);
-            }, [], this);
-        }
-        //outro
-        if (NPCmessage == 4) {
-            let storymessage4 = "You've heard my tales, seen the horrors that await. I believe you can make a difference, maybe even prevent this. Here, take this portal back to your world, learn from our future, and change yours.";
-            this.message4 = this.add.text(900, 780, storymessage4, { 
-                font: "42px pixelfont", 
-                fill: "#ffffff", 
-                align: "center",
-                wordWrap: { width: 600 } // wrap words that exceed this width
-            }).setOrigin(0.5).setAlpha(1); // set origin to center
-            this.time.delayedCall(5000, () => {
-                this.message3.destroy();
-                this.cameras.main.fadeOut(3000);
-                this.cameras.main.once('camerafadeoutcomplete', function (camera) {
-                    this.scene.start('MiniGame3');
-                }, this);
-            }, [], this);
-    }
+        this.add.image(this.gww/2, this.gwh/2, 'background');
+        this.player = this.physics.add.image(this.gww/2, this.gwh*0.55, 'player').setScale(window.devicePixelRatio*3);
+        this.player.body.setCollideWorldBounds(true);
 
+        this.npc = this.physics.add.image(this.gww/2, this.gwh*0.28, 'NPC').setScale(window.devicePixelRatio*3);
+        this.npc.body.setImmovable(true); 
+        
+        //collider
+        this.physics.add.collider(this.player, this.npc, this.handlePlayerNPCOverlap, null, this);
+        this.isMoving = false; 
+
+        // Inside the 'pointerdown' event
+        this.input.on('pointerdown', (pointer) => {
+            if (!rect.contains(pointer.x, pointer.y)) {
+                this.physics.moveTo(this.player, pointer.x, pointer.y, 300);
+                this.targetX = pointer.x;
+                this.targetY = pointer.y;
+            }
+        });
+        //fade
+        this.fadeInScene();
+        this.fullScreenButton();
+        this.muteButton(this.backMusic);
     }
     update() {
+        if (Phaser.Math.Distance.Between(this.player.x, this.player.y, this.targetX, this.targetY) < 10) {
+            this.player.body.setVelocity(0);
         }
     }
+}

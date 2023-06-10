@@ -1,10 +1,10 @@
 
-class intro extends Phaser.Scene {
+class Intro extends Cinematics {
     constructor() {
-        super('intro');
+        super('intro', 'intro');
     }
-    create() {
-        this.cameras.main.fadeIn(1000, 0, 0, 0);
+    onEnter() {
+        this.fadeInScene();
         this.add.text(560,560, "Core Gameplay Prototype").setFontSize(50);
         this.add.text(760,760, "Click anywhere to start next game.").setFontSize(20);
         this.input.on('pointerdown', () => {

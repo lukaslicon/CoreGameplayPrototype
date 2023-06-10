@@ -1,14 +1,21 @@
-class load extends Phaser.Scene {
+class Load extends Phaser.Scene {
     constructor(){
         super('load');
     }
     preload ()
     {
+        //font
+        this.load.text('pmd', 'font.css');
+        
+        //shaders
+        this.load.glsl('bundle', 'assets/shaders/bundle.glsl.js');
+        this.load.image('portal', 'assets/images/portal.png')
+        
         //global images
-
-        this.load.path = 'assets/';
-        this.load.audio('BGM', 'BGM.mp3')
-        this.load.audio('titleMusic', 'titleMusic.mp3')
+        this.load.path = 'assets/images/';
+        this.load.image('fullscreen', 'fullscreen.png');
+        this.load.audio('BGM', 'music/BGM.mp3')
+        this.load.audio('titleMusic', 'music/titleMusic.mp3')
         this.load.image("background", "map.png");
         this.load.image("introScreen", "preTitleScreen.png");
         this.load.spritesheet('OutroGif', 'spritesheet.png', { frameWidth: 1920, frameHeight: 1082 });
@@ -16,13 +23,13 @@ class load extends Phaser.Scene {
         this.load.image('play', 'play.png')
 
         //logos
-        this.load.image('JLogo', 'JEMStudios.png');
-        this.load.image('LLogo', 'buggyGames.png');
-        this.load.image('MLogo', 'MLogo.png');
+        this.load.image('JLogo', 'logos/JEMStudios.png');
+        this.load.image('LLogo', 'logos/buggyGames.png');
+        this.load.image('MLogo', 'logos/MLogo.png');
 
         //npcScreen
-        this.load.image('player', 'mainCharacter.png');
-        this.load.image('NPC', 'npc.png');
+        this.load.image('player', 'npcScreen/mainCharacter.png');
+        this.load.image('NPC', 'npcScreen/npc.png');
 
         //game1
         this.load.image('app', 'game1/HousingApp.png');
@@ -36,7 +43,7 @@ class load extends Phaser.Scene {
         this.load.image("bottomHouse", "game1/bottomHouse.png");
         this.load.image("leftHouse", "game1/leftHouse.png");
         this.load.image("rightHouse", "game1/rightHouse.png");
-        
+
         //game2
         this.load.image('coin', 'game2/slug.png');
         this.load.image('bg','game2/background.png');
@@ -47,7 +54,7 @@ class load extends Phaser.Scene {
         this.load.image('coinb','game2/badslug.png');
         this.load.audio('dmg','game2/damage.wav');
         this.load.audio('catch','game2/catch.wav');
-        
+
         //game3
         this.load.image('turbo', 'game3/gLOVE.png');
         this.load.image('bg1','game3/background1.png');
@@ -61,7 +68,6 @@ class load extends Phaser.Scene {
         this.load.image('sh2','game3/sh2.png')
         this.load.image('sh3','game3/sh3.png')
         this.load.image('sh4','game3/shno.png')
-
     }
     create()
     {
@@ -76,3 +82,4 @@ housing = 0;
 progress = 0;
 NPCmessage = 0;
 game1score = 0;
+musicMute = false;
