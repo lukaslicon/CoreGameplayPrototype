@@ -1,1 +1,2 @@
-# CinematicsPrototype
+# CoreGameplayPrototype
+- You will notice images as our main visual asset but we also use a spritesheet to create an animation within our outro that you can see we are loading a spritesheet within load. We also are using phaser graphics to create rectangles for bounds but it is not visual instead just used for collision. Also, we have been using procedural graphics to create shaders that we are using for textboxes with our NPC interactions.
