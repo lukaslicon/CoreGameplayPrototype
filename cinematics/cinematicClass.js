@@ -113,13 +113,13 @@ class Cinematics extends settings {
             .setOrigin(0.5)
             .setAlpha(1);
             this.player.body.moves = false;
-            this.time.delayedCall(13000, () => {
+            this.time.delayedCall(5000, () => {
                 this.message1.destroy();
                 //fade
                 this.cameras.main.fadeOut(3000);
                 this.cameras.main.once('camerafadeoutcomplete', function (camera) {
                     this.backMusic.stop();
-                    this.scene.start('MiniGameTEST');
+                    this.scene.start('MiniGame1');
                 }, this);
             }, [], this);
         }
@@ -131,12 +131,12 @@ class Cinematics extends settings {
             .setOrigin(0.5)
             .setAlpha(1);
             this.player.body.moves = false;
-            this.time.delayedCall(13000, () => {
+            this.time.delayedCall(5000, () => {
                 this.message2.destroy();
                 this.cameras.main.fadeOut(3000);
                 this.cameras.main.once('camerafadeoutcomplete', function (camera) {
                     this.backMusic.stop();
-                    this.scene.start('MiniGameTEST');
+                    this.scene.start('MiniGame2');
                 }, this);
             }, [], this);
         }
@@ -149,12 +149,12 @@ class Cinematics extends settings {
             .setAlpha(1);
 
             this.player.body.moves = false;
-            this.time.delayedCall(13000, () => {
+            this.time.delayedCall(5000, () => {
                 this.message3.destroy();
                 this.cameras.main.fadeOut(3000);
                 this.cameras.main.once('camerafadeoutcomplete', function (camera) {
                     this.backMusic.stop();
-                    this.scene.start('MiniGameTEST');
+                    this.scene.start('MiniGame3');
                 }, this);
             }, [], this);
         }
@@ -167,12 +167,12 @@ class Cinematics extends settings {
             .setAlpha(1);
             
             this.player.body.moves = false;
-            this.time.delayedCall(13000, () => {
+            this.time.delayedCall(5000, () => {
                 this.message4.destroy();
                 this.cameras.main.fadeOut(3000, 0, 0, 0, (camera, progress) => {
                     this.backMusic.stop();
                     if (progress === 1) {
-                        this.scene.start('OutroTEST', {}, { alpha: 0, duration: 1000 });
+                        this.scene.start('outro', {}, { alpha: 0, duration: 1000 });
                     }
                 });
             }, [], this);
