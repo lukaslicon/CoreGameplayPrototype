@@ -5,63 +5,23 @@ let tuboConfig = {
     mute: false,
 }
 
-class MiniGame2 extends Phaser.Scene {
+class MiniGame2 extends MiniGameClass {
     constructor() {
-        super('MiniGame2');
+        super('MiniGame2', 'MiniGame2');
     }
 
-    path1(obj){
-        this.target1 = new Phaser.Math.Vector2();
-            this.target1.x = 1532
-            this.target1.y = 800
-        this.physics.moveToObject(obj,this.target1,600);
-        this.tweens.add({
-            targets: obj,
-            alpha: { from: 0.5, to: 0 },
-            yoyo: true,
-            duration: 600,
-            repeat: -1,
-        });
-    }
-    path2(obj){
-        this.target2 = new Phaser.Math.Vector2();
-            this.target2.x = 429
-            this.target2.y = 850
-        this.physics.moveToObject(obj,this.target2,300);
-        this.tweens.add({
-            targets: obj,
-            alpha: { from: 0.5, to: 0 },
-            yoyo: true,
-            duration: 900,
-            repeat: -1,
-        });
-    }
-    path3(obj){
-        this.target3 = new Phaser.Math.Vector2();
-            this.target3.x = 710
-            this.target3.y = 1500
-        this.physics.moveToObject(obj,this.target3,450);
-        this.tweens.add({
-            targets: obj,
-            alpha: { from: 0.5, to: 0 },
-            yoyo: true,
-            duration: 1500,
-            repeat: -1,
-        });
-    }
-    shake(obj) {
-        this.tweens.add({
-            targets: obj,
-            x: { from: obj.x, to: obj.x + (Math.random() * 5 - 200) },
-            y: { from: obj.y, to: obj.y + (Math.random() * 5 - 200) },
-            duration: 500,
-            yoyo: true,
-            repeat: 5,
-            onComplete: () => obj.setAlpha(0)
-        })
-    }
-    create(){
-        let CleanText = this.add.text(540, 500, "Let's clean out this closet full of ghosts! \n Watch out for the red ones!").setStyle({ fontSize: 50, color: '#fff' })
+    onEnter(){
+        if (musicMute == true){
+            this.backMusic.play();
+            this.backMusic.setVolume(0);
+         }
+         else{
+             this.backMusic.play();
+         }
+
+        this.gwh = this.game.config.height;
+        this.gww = this.game.config.width;
+        let CleanText = this.add.text(290, 700, "Let's clean out this closet full of ghosts! \nWatch out for the red ones!").setStyle({ fontSize: 50, color: '#fff' })
         this.time.delayedCall(3000, () => {
             this.tweens.add({
                 targets: CleanText,
@@ -69,20 +29,13 @@ class MiniGame2 extends Phaser.Scene {
                 duration: 1000 // This is the duration of the fade out
             });
         }, [], this);
-
-        let HUD = this.add.text(590, 900, 'Click on the slugs').setStyle({ fontSize: 50, color: '#fff' })
-        this.time.delayedCall(5000, () => {
-            this.tweens.add({
-                targets: HUD,
-                alpha: 0,
-                duration: 1000 // This is the duration of the fade out
-            });
-        }, [], this);
+        CleanText.setDepth(1);
 
         this.dmg = this.sound.add("dmg");
-
         this.catch = this.sound.add("catch");
+
         this.cameras.main.fadeIn(1000, 0, 0, 0);
+
         this.bbg = this.add.image(0,0,'bg')
         this.bbg.displayHeight = this.sys.game.config.height;
         this.bbg.scaleX = this.bbg.scaleY;
@@ -90,24 +43,36 @@ class MiniGame2 extends Phaser.Scene {
         this.bbg.y = this.sys.game.config.height/2;
 
         this.pointcount = this.add.text(0,0)
-            .setStyle({ fontSize: 200, color: '#fff' })
-        this.points = 0;
+            .setStyle({ fontSize: 800 / 7, color: '#fff' })
         this.health = 4;
-        this.sh1 = this.add.image(1800,120,'sh1')
-            this.sh1.setScale(0.25)
+        this.sh1 = this.add.image(this.gww/1.08,this.gwh/10,'sh1')
+            this.sh1.setScale(1/5)
             this.sh1.setAlpha(1)
-        this.sh2 = this.add.image(1800,120,'sh2')
-            this.sh2.setScale(0.25)
+        this.sh2 = this.add.image(this.gww/1.08,this.gwh/10,'sh2')
+            this.sh2.setScale(1/5)
             this.sh2.setAlpha(0)
-        this.sh3 = this.add.image(1800,120,'sh3')
-            this.sh3.setScale(0.25)
+        this.sh3 = this.add.image(this.gww/1.08,this.gwh/10,'sh3')
+            this.sh3.setScale(1/5)
             this.sh3.setAlpha(0)
-        this.sh4 = this.add.image(1800,120,'sh4')
-            this.sh4.setScale(0.25)
+        this.sh4 = this.add.image(this.gww/1.08,this.gwh/10,'sh4')
+            this.sh4.setScale(1/5)
             this.sh4.setAlpha(0)
-        this.coin1 = this.physics.add.image(400,200,"coin")
+
+            
+        //pointer
+        this.pointerHand = this.add.image(this.gww / 2.5, this.gwh * 0.55, 'pointer').setScale(2);
+        this.tweens.add({
+            targets: this.pointerHand,
+            alpha: 0,
+            duration: 2000,
+            ease: 'Linear',
+            repeat: -1,
+            yoyo: true,
+        });
+
+        this.coin1 = this.physics.add.image(this.gww*0.2,this.gwh*0.18,"coin")
             .setInteractive({useHandCursor:true})
-            .setScale(0.1)
+            .setScale(1 / 10)
             .setBounce(1, 1)
             .setCollideWorldBounds(true)
             .on('pointerdown', () => {
@@ -118,12 +83,16 @@ class MiniGame2 extends Phaser.Scene {
                     duration: 750,
                     onComplete: () => this.coin1.destroy()
                 })
+                if(game2pointer == false){
+                    this.pointerHand.destroy();
+                    game2pointer = true;
+                }
                 this.catch.play();
-                this.points++;
+                game2score++;
             })
-        this.coin2 = this.physics.add.image(1200,0,"coin")
+            this.coin2 = this.physics.add.image(this.gww*0.625,0,"coin")
             .setInteractive({useHandCursor:true})
-            .setScale(0.25)
+            .setScale(1 / 4)
             .setBounce(1, 1)
             .setCollideWorldBounds(true)
             .on('pointerdown', () => {
@@ -134,12 +103,16 @@ class MiniGame2 extends Phaser.Scene {
                     duration: 750,
                     onComplete: () => this.coin2.destroy()
                 })
+                if(game2pointer == false){
+                    this.pointerHand.destroy();
+                    game2pointer = true;
+                }
                 this.catch.play();
-                this.points++;
+                game2score++;
             })
-        this.coin3 = this.physics.add.image(740,200,"coin")
+        this.coin3 = this.physics.add.image(this.gww*0.38,this.gwh*0.185,"coin")
             .setInteractive({useHandCursor:true})
-            .setScale(0.5)
+            .setScale(1 / 2)
             .setBounce(1, 1)
             .setCollideWorldBounds(true)
             .on('pointerdown', () => {
@@ -150,12 +123,16 @@ class MiniGame2 extends Phaser.Scene {
                     duration: 750,
                     onComplete: () => this.coin3.destroy()
                 })
+                if(game2pointer == false){
+                    this.pointerHand.destroy();
+                    game2pointer = true;
+                }
                 this.catch.play();
-                this.points++;
+                game2score++;
             })
-        this.coin4 = this.physics.add.image(1919,1080,"coin")
+        this.coin4 = this.physics.add.image(this.gww-2,this.gwh,"coin")
             .setInteractive({useHandCursor:true})
-            .setScale(0.125)
+            .setScale(1 / 8)
             .setBounce(1, 1)
             .setCollideWorldBounds(true)
             .on('pointerdown', () => {
@@ -166,12 +143,16 @@ class MiniGame2 extends Phaser.Scene {
                     duration: 750,
                     onComplete: () => this.coin4.destroy()
                 })
+                if(game2pointer == false){
+                    this.pointerHand.destroy();
+                    game2pointer = true;
+                }
                 this.catch.play();
-                this.points++;
+                game2score++;
             })
-        this.coin5 = this.physics.add.image(2,392,"coin")
+        this.coin5 = this.physics.add.image(2,this.gwh*0.363,"coin")
             .setInteractive({useHandCursor:true})
-            .setScale(0.4)
+            .setScale(1 / 2.5)
             .setBounce(1, 1)
             .setCollideWorldBounds(true)
             .on('pointerdown', () => {
@@ -182,12 +163,16 @@ class MiniGame2 extends Phaser.Scene {
                     duration: 750,
                     onComplete: () => this.coin5.destroy()
                 })
+                if(game2pointer == false){
+                    this.pointerHand.destroy();
+                    game2pointer = true;
+                }
                 this.catch.play();
-                this.points++;
+                game2score++;
             })
-        this.coin6 = this.physics.add.image(233,1000,"coin")
+        this.coin6 = this.physics.add.image(this.gww*0.12,this.gwh*0.92,"coin")
             .setInteractive({useHandCursor:true})
-            .setScale(0.34)
+            .setScale(1 / 2.9)
             .setBounce(1, 1)
             .setCollideWorldBounds(true)
             .on('pointerdown', () => {
@@ -198,12 +183,16 @@ class MiniGame2 extends Phaser.Scene {
                     duration: 750,
                     onComplete: () => this.coin6.destroy()
                 })
+                if(game2pointer == false){
+                    this.pointerHand.destroy();
+                    game2pointer = true;
+                }
                 this.catch.play();
-                this.points++;
+                game2score++;
             })
-        this.coin7 = this.physics.add.image(700,230,"coin")
+        this.coin7 = this.physics.add.image(this.gww*0.364,this.gwh*0.25,"coin")
             .setInteractive({useHandCursor:true})
-            .setScale(0.6)
+            .setScale(1 / 4)
             .setBounce(1, 1)
             .setCollideWorldBounds(true)
             .on('pointerdown', () => {
@@ -214,12 +203,16 @@ class MiniGame2 extends Phaser.Scene {
                     duration: 750,
                     onComplete: () => this.coin7.destroy()
                 })
+                if(game2pointer == false){
+                    this.pointerHand.destroy();
+                    game2pointer = true;
+                }
                 this.catch.play();
-                this.points++;
+                game2score++;
             })
-        this.coin8 = this.physics.add.image(1293,230,"coin")
+        this.coin8 = this.physics.add.image(this.gww*0.67,this.gwh*0.21,"coin")
             .setInteractive({useHandCursor:true})
-            .setScale(0.43)
+            .setScale(1 / 2.65)
             .setBounce(1, 1)
             .setCollideWorldBounds(true)
             .on('pointerdown', () => {
@@ -230,12 +223,16 @@ class MiniGame2 extends Phaser.Scene {
                     duration: 750,
                     onComplete: () => this.coin8.destroy()
                 })
+                if(game2pointer == false){
+                    this.pointerHand.destroy();
+                    game2pointer = true;
+                }
                 this.catch.play();
-                this.points++;
+                game2score++;
             })
-        this.coin9 = this.physics.add.image(700,900,"coin")
+        this.coin9 = this.physics.add.image(this.gww*0.364,this.gwh*0.83,"coin")
             .setInteractive({useHandCursor:true})
-            .setScale(0.32)
+            .setScale(1 / 3)
             .setBounce(1, 1)
             .setCollideWorldBounds(true)
             .on('pointerdown', () => {
@@ -246,12 +243,16 @@ class MiniGame2 extends Phaser.Scene {
                     duration: 300,
                     onComplete: () => this.coin9.destroy()
                 })
+                if(game2pointer == false){
+                    this.pointerHand.destroy();
+                    game2pointer = true;
+                }
                 this.catch.play();
-                this.points++;
+                game2score++;
             })
-        this.coin10 = this.physics.add.image(1283,504,"coin")
+        this.coin10 = this.physics.add.image(this.gww*0.66,this.gwh*0.46,"coin")
             .setInteractive({useHandCursor:true})
-            .setScale(0.23)
+            .setScale(1 / 4.8)
             .setBounce(1, 1)
             .setCollideWorldBounds(true)
             .on('pointerdown', () => {
@@ -262,12 +263,16 @@ class MiniGame2 extends Phaser.Scene {
                     duration: 750,
                     onComplete: () => this.coin10.destroy()
                 })
+                if(game2pointer == false){
+                    this.pointerHand.destroy();
+                    game2pointer = true;
+                }
                 this.catch.play();
-                this.points++;
+                game2score++;
             })
-        this.coin11 = this.physics.add.image(1300,430,"coinb")
+        this.coin11 = this.physics.add.image(this.gww*0.677,this.gwh*0.398,"coinb")
             .setInteractive({useHandCursor:true})
-            .setScale(0.32)
+            .setScale(1 / 3)
             .setBounce(1, 1)
             .setCollideWorldBounds(true)
             .on('pointerdown', () => {
@@ -278,13 +283,17 @@ class MiniGame2 extends Phaser.Scene {
                     duration: 750,
                     onComplete: () => this.coin11.destroy()
                 })
+                if(game2pointer == false){
+                    this.pointerHand.destroy();
+                    game2pointer = true;
+                }
                 this.dmg.play();
                 this.cameras.main.shake(300)
                 this.health--;
             })
-        this.coin12 = this.physics.add.image(300,1080,"coinb")
+        this.coin12 = this.physics.add.image(this.gww*0.15,this.gwh,"coinb")
             .setInteractive({useHandCursor:true})
-            .setScale(0.25)
+            .setScale(1 / 4)
             .setBounce(1, 1)
             .setCollideWorldBounds(true)
             .on('pointerdown', () => {
@@ -295,13 +304,17 @@ class MiniGame2 extends Phaser.Scene {
                     duration: 750,
                     onComplete: () => this.coin12.destroy()
                 })
-                this.dmg.play(tuboConfig);
+                if(game2pointer == false){
+                    this.pointerHand.destroy();
+                    game2pointer = true;
+                }
+                this.dmg.play();
                 this.cameras.main.shake(300)
                 this.health--;
             })
-        this.coin13 = this.physics.add.image(0,900,"coinb")
+        this.coin13 = this.physics.add.image(0,this.gwh*0.833,"coinb")
             .setInteractive({useHandCursor:true})
-            .setScale(0.32)
+            .setScale(1 / 3)
             .setBounce(1, 1)
             .setCollideWorldBounds(true)
             .on('pointerdown', () => {
@@ -312,13 +325,17 @@ class MiniGame2 extends Phaser.Scene {
                     duration: 750,
                     onComplete: () => this.coin13.destroy()
                 })
-                this.dmg.play(tuboConfig);
+                if(game2pointer == false){
+                    this.pointerHand.destroy();
+                    game2pointer = true;
+                }
+                this.dmg.play();
                 this.cameras.main.shake(300)
                 this.health--;
             })
-        this.coin14 = this.physics.add.image(1239,10,"coinb")
+        this.coin14 = this.physics.add.image(this.gww*0.645,0,"coinb")
             .setInteractive({useHandCursor:true})
-            .setScale(0.195)
+            .setScale(1 / 5.1)
             .setBounce(1, 1)
             .setCollideWorldBounds(true)
             .on('pointerdown', () => {
@@ -329,13 +346,17 @@ class MiniGame2 extends Phaser.Scene {
                     duration: 750,
                     onComplete: () => this.coin14.destroy()
                 })
-                this.dmg.play(tuboConfig);
+                if(game2pointer == false){
+                    this.pointerHand.destroy();
+                    game2pointer = true;
+                }
+                this.dmg.play();
                 this.cameras.main.shake(300)
                 this.health--;
             })
-        this.coin15 = this.physics.add.image(30,230,"coinb")
+        this.coin15 = this.physics.add.image(5,this.gwh*0.21,"coinb")
             .setInteractive({useHandCursor:true})
-            .setScale(0.195)
+            .setScale(1 / 5.1)
             .setBounce(1, 1)
             .setCollideWorldBounds(true)
             .on('pointerdown', () => {
@@ -346,26 +367,32 @@ class MiniGame2 extends Phaser.Scene {
                     duration: 750,
                     onComplete: () => this.coin15.destroy()
                 })
-                this.dmg.play(tuboConfig);
+                if(game2pointer == false){
+                    this.pointerHand.destroy();
+                    game2pointer = true;
+                }
+                this.dmg.play();
                 this.cameras.main.shake(300)
                 this.health--;
             })
-        this.path1(this.coin1);
-        this.path2(this.coin3);
-        this.path3(this.coin2);
-        this.path1(this.coin4);
-        this.path2(this.coin5);
-        this.path3(this.coin6);
-        this.path1(this.coin7);
-        this.path1(this.coin8);
-        this.path2(this.coin9);
-        this.path2(this.coin10);
-        this.path3(this.coin11);
-        this.path2(this.coin12);
-        this.path1(this.coin13);
-        this.path1(this.coin14);
-        this.path3(this.coin15);
-        
+        this.pathFunction1(this.coin1);
+        this.pathFunction2(this.coin3);
+        this.pathFunction3(this.coin2);
+        this.pathFunction1(this.coin4);
+        this.pathFunction2(this.coin5);
+        this.pathFunction3(this.coin6);
+        this.pathFunction1(this.coin7);
+        this.pathFunction1(this.coin8);
+        this.pathFunction2(this.coin9);
+        this.pathFunction2(this.coin10);
+        this.pathFunction3(this.coin11);
+        this.pathFunction2(this.coin12);
+        this.pathFunction1(this.coin13);
+        this.pathFunction1(this.coin14);
+        this.pathFunction3(this.coin15);
+        this.muteButton(this.backMusic);
+        this.fullScreenButton();
+
     }
     update(){
         if (this.health == 3) {
@@ -384,31 +411,21 @@ class MiniGame2 extends Phaser.Scene {
             this.sh3.setAlpha(0);
             this.sh3.destroy();
             this.sh4.setAlpha(1);
-        }
+        }//
         if (this.health == 0) {
+            this.failCondition();
             this.cameras.main.fade(1000, 0,0,0);
-            this.time.delayedCall(1000, () =>this.scene.start('Fail'));
+            this.backMusic.stop();
+            this.time.delayedCall(1000, () =>this.scene.start('npcScreen'));
         }
-        if (this.points == 10) {
+        if (game2score == 10) {
+            game2win = true;
+            this.winCondition();
             this.cameras.main.fade(1000, 0,0,0);
+            this.backMusic.stop();
             this.time.delayedCall(1000, () =>this.scene.start('npcScreen')); //change fail to new next game
         }
-        this.pointcount.setText(this.points);
+        this.pointcount.setText(game2score);
     }
 }
 
-class Fail extends Phaser.Scene {
-    constructor() {
-        super('Fail');
-    }
-    create() {
-        this.cameras.main.fadeIn(1000, 0, 0, 0);
-        this.add.text(560,560, "You failed!").setFontSize(50);
-        this.add.text(660,660, "Nice aim you got there...").setFontSize(20);
-        this.add.text(760,760, "Click anywhere to continue.").setFontSize(20);
-        this.input.on('pointerdown', () => {
-            this.cameras.main.fade(1000, 0,0,0);
-            this.time.delayedCall(1000, () => this.scene.start('npcScreen'));
-        });
-    }
-}
