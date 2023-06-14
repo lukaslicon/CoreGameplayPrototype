@@ -6,6 +6,6 @@ class Outro extends  Cinematics {
     create() {
         this.cameras.main.fadeIn(1000, 0, 0, 0);
         this.fullScreenButton();
-        this.add.text(560,560, "Core Gameplay TESTING OVER...\n     next is cinematics").setFontSize(50);
+        this.add.text(560,560, "Core Gameplay TESTING OVER...\n").setFontSize(50);
     }
 }

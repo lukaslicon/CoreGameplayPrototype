@@ -18,7 +18,7 @@ let config = {
             debugShowVelocity: false
         }
     },
-    scene: [Load, npcScreen, MiniGame1, MiniGame2, MiniGame3, UI],
+    scene: [Load, npcScreen, MiniGame1, MiniGame2, MiniGame3, UI, Outro],
     title: "FutureBound",
     scaleMode: Phaser.Scale.ScaleModes.RESIZE,
     autoRound: true,
