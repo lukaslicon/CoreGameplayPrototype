@@ -2,13 +2,13 @@ housing = false;
 progress = 0;
 NPCmessage = 0;
 
-game1score = 11;
+game1score = 0;
 game1win = false;
 
-game2score = 9;
+game2score = 0;
 game2win = false;
 
-game3score = 7;
+game3score = 0;
 game3win = false;
 
 musicMute = false;
